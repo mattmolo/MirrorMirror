@@ -1,0 +1,26 @@
+@import url(http://fonts.googleapis.com/css?family=Lato:100,300,400);
+html, body {padding:0;margin:0;}
+
+
+body {
+    background: #000;
+    color: white;
+    font-family: Lato;
+    font-weight: 100;
+    font-size: 3em;
+}
+a{
+    text-decoration: none;
+}
+
+#title {
+    font-size: 1.3em;
+    padding-top: 1em;
+    text-align: center;
+}
+#weatherHolder {
+    padding-top: 0.5em;
+}
+#weatherTitle {
+    text-align: center;
+}
