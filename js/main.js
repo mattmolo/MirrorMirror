@@ -5,6 +5,7 @@ var smallWeather = 0;
 var darkMode = 0;
 var rainToday = 0;
 var tempWeather;
+var globHours = 0;
 setTimeout(function(){
     if(jQueryLoad == 0)
     {
@@ -15,7 +16,7 @@ setTimeout(function(){
 },2000);
 function updateNews(){
 
-    var url = 'http://www.reddit.com/r/news.json?jsonp=jsonCallback';
+    var url = 'http://www.reddit.com/r/news.json?jsonp=jsonCallback&limit=50';
     $.ajax({
        type: 'GET',
        url: url,
@@ -59,6 +60,7 @@ setTimeout(function(){
 function startTime(){
     var time = new Date();
     var hours = time.getHours();
+    globHours = hours;
     var minute = time.getMinutes();
     var seconds = time.getSeconds();
     var day = time.getDate();
@@ -164,7 +166,7 @@ function startTime(){
 }
 var news = '';
 function getNews(){
-    var url = 'http://www.reddit.com/r/news.json?jsonp=jsonCallback';
+    var url = 'http://www.reddit.com/r/news.json?jsonp=jsonCallback&limit=50';
     $.ajax({
        type: 'GET',
        url: url,
@@ -401,6 +403,18 @@ function enablePersonal(){
     $("#bus").css("marginTop","0px");
     $("#title").css("fontSize", "3em");
     $("#date").css("fontSize", "1em");
+    if (globHours < 11)
+    {
+        readme("Good Morning! Here is your information.");
+    }
+    else if (globHours < 17)
+    {
+        readme("Good Afternoon! Here is your information.");
+    }
+    else 
+    {
+        readme("Good Evening! Here is your information.");
+    }
     var stop = '59081';
     var route = '1817';  //INSERT CODE FOR PERSONAL INFO HERE
     var dark = 0;
@@ -408,7 +422,7 @@ function enablePersonal(){
     {
         toggleDarkMode();
     }
-    getCalendar(1);
+    getCalendar(0);
     getBusStop(stop, route);
     $("#message").css("opacity",0);
     //},3000);
@@ -476,6 +490,75 @@ function checkForRain(){
     if (rainToday == 1)
     {
         $("#rainCheck").html("Bring an Umbrella. It will rain today.")
+        readme("Today has a chance to rain. Bring an umbrella.")
         $("#rainCheck").css("opacity","1");
     }
 }
+
+/*
+/ This section is for text to voice.
+/
+/
+/
+/
+/
+*/
+function html5_audio(){
+    var a = document.createElement('audio');
+    return !!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''));
+}
+ 
+var play_html5_audio = false;
+if(html5_audio()) play_html5_audio = true;
+ 
+function play_sound(url){
+    if(play_html5_audio){
+        var snd = new Audio(url);
+        snd.load();
+        snd.play();
+    }else{
+        $("#sound").remove();
+        var sound = $("<embed id='sound' type='audio/mpeg' />");
+        sound.attr('src', url);
+        sound.attr('loop', false);
+        sound.attr('hidden', true);
+        sound.attr('autostart', true);
+        $('body').append(sound);
+    }
+}
+function readme(txt){
+    play_sound("http://translate.google.com/translate_tts?ie=UTF-8&q="+encodeURIComponent(txt)+"&tl=en&total=1&idx=0prev=input");           
+}
+//----------------------------------------------------------------------
+var leapEnable = 1;
+setTimeout(function(){
+    var controller = Leap.loop({enableGestures: true, background: true}, function(frame){
+          if(frame.valid && frame.gestures.length > 0 && leapEnable == 1){
+            gesture = frame.gestures[0]
+                switch (gesture.type){
+                  case "circle":
+                  console.log("Circle Gesture");
+                  toggleDarkMode();
+                  leapEnable = 0;
+                  break;
+                  case "keyTap":
+                  console.log("Key Tap Gesture");
+                  leapEnable = 0;
+                  break;
+                  case "screenTap":
+                  console.log("Screen Tap Gesture");
+                  leapEnable = 0;
+                  break;
+                  case "swipe":
+                  console.log("Swipe Gesture");
+                  leapEnable = 0;
+                  break;
+              }
+            setTimeout(function(){
+                leapEnable = 1;
+            },1000);
+        }
+
+});
+},1000);
+

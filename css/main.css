@@ -22,7 +22,7 @@ a{
 }
 #date {
     text-align: center;
-    font-size: 2ema;
+    font-size: 2em;
     transition: font-size 1s;
 }
 #weatherHolder {
