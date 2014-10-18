@@ -6,6 +6,8 @@ var darkMode = 0;
 var rainToday = 0;
 var tempWeather;
 var globHours = 0;
+var newsTimeout1;
+var newsTimeout2;
 setTimeout(function(){
     if(jQueryLoad == 0)
     {
@@ -192,14 +194,18 @@ function startNews(){
     {
         newsCycle = 0;
     }
+    if(newsCycle == -1)
+    {
+        newsCycle = news.length - 1;
+    }
     if(personalMode == 0)
     {
         $("#message").html(news[newsCycle].data.title);
         $("#message").css("opacity",1);
-        setTimeout(function(){
+        newsTimeout1 = setTimeout(function(){
             $("#message").css("opacity",0);
         },9000);
-        setTimeout(function(){
+        newsTimeout2 = setTimeout(function(){
             startNews(++newsCycle);
         },10000);
     }
@@ -538,19 +544,82 @@ setTimeout(function(){
                 switch (gesture.type){
                   case "circle":
                   console.log("Circle Gesture");
-                  toggleDarkMode();
                   leapEnable = 0;
+
+                  var swipe;
+                  console.log(gesture);
+                  console.log("Swipe Gesture");
+                  console.log(gesture);
+                  newsCycle++;
+                  clearTimeout(newsTimeout1);
+                  clearTimeout(newsTimeout2);
+                  $("#message").css("opacity",0);
+
+                    //swipe = 'r';
+                      $("#message").animate({
+                        left: '-120%'
+                      },450);
+                  setTimeout(function(){$("#message").css("left","120%");},500);  
+                  setTimeout(function(){
+                    
+                    $("#message").animate({
+                        left: '5%'
+                    },500);
+                    startNews();
+                  },500);
+
                   break;
                   case "keyTap":
                   console.log("Key Tap Gesture");
+                  console.log(gesture);
+                  toggleDarkMode();
                   leapEnable = 0;
                   break;
                   case "screenTap":
                   console.log("Screen Tap Gesture");
+                  console.log(gesture);
+                  if(personalMode == 1)
+                  {
+                    clearTimeout(newsTimeout1);
+                    clearTimeout(newsTimeout2);
+                    disablePersonal();
+
+                  }
                   leapEnable = 0;
                   break;
                   case "swipe":
+                  var swipe;
                   console.log("Swipe Gesture");
+                  console.log(gesture);
+                  
+                  clearTimeout(newsTimeout1);
+                  clearTimeout(newsTimeout2);
+                  $("#message").css("opacity",0);
+                  if(gesture.position[0]-gesture.startPosition[0] > 0)
+                  {
+                    newsCycle--;
+                    //swipe = 'r';
+                      $("#message").animate({
+                        left: '120%'
+                      },450)
+                    setTimeout(function(){$("#message").css("left","-120%");},500);  
+                  }
+                  else
+                  {
+                    newsCycle++;
+                    //swipe = 'l';
+                      $("#message").animate({
+                        left: '-120%'
+                      },450);
+                      setTimeout(function(){$("#message").css("left","120%");},500);  
+                  }
+
+                  setTimeout(function(){
+                    $("#message").animate({
+                        left: '5%'
+                    },500);
+                    startNews();
+                  },500);
                   leapEnable = 0;
                   break;
               }
@@ -561,4 +630,5 @@ setTimeout(function(){
 
 });
 },1000);
+
 
