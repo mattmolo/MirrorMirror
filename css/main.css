@@ -15,8 +15,14 @@ a{
 }
 
 #title {
-    font-size: 3em;
+    font-size: 4em;
     text-align: center;
+    transition: font-size 1s;
+}
+#date {
+    text-align: center;
+    font-size: 2em;
+    transition: font-size 1s;
 }
 #weatherHolder {
     padding-top: 0.5em;
@@ -63,10 +69,11 @@ a{
 }
 #message {
     position: absolute;
-    top: 50%;
-    width: 100%;
+    top: 40%;
+    width: 90%;
+    left: 5%;
     text-align: center;
-    font-size: 3em;
+    font-size: 1.8em;
     opacity: 0;
     transition: opacity 1s;
 }
