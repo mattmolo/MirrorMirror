@@ -1,0 +1,15 @@
+{
+	"events":
+	[
+		{
+			"startTime":"16:30",
+			"endTime":"17:30",
+			"title":"Meeting with Matt"
+		},
+		{
+			"startTime":"8:00",
+			"endTime":"10:15",
+			"title":"Working on Code"
+		}
+	]
+}

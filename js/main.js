@@ -44,20 +44,20 @@ setTimeout(function(){
 function initialize(){
     var url = 'http://api.openweathermap.org/data/2.5/find?q=West_Lafayette&callback=weatherGet';
     $.ajax({
-       type: 'GET',
-       url: url,
-       async: false,
-       jsonpCallback: 'jsonCallback',
-       contentType: "application/json",
-       dataType: 'jsonp',
-       success: function(json) {
+     type: 'GET',
+     url: url,
+     async: false,
+     jsonpCallback: 'jsonCallback',
+     contentType: "application/json",
+     dataType: 'jsonp',
+     success: function(json) {
         changeWeather(json.list[0]);
             //jQueryLoad = 1;
         },
         error: function(e) {
-           console.log(e.message);
-       }
-   });
+         console.log(e.message);
+     }
+ });
     setTimeout(function(){
         initialize();
     },10000);
@@ -78,6 +78,29 @@ function changeWeather(json){
 
 function getCalendar(url){
     $.get(
-    'http://www.corsproxy.com/www.google.com/calendar/feeds/johnmlee101%40gmail.com/private-80b8fb2cf3fd34f615edfa06770d2151/basic',
-    function(response) { console.log(response);});
+        'http://www.corsproxy.com/www.google.com/calendar/feeds/johnmlee101%40gmail.com/private-80b8fb2cf3fd34f615edfa06770d2151/basic',
+        function(response) {   
+            console.log(response);
+            xmlDoc = response;
+            $xml = $( xmlDoc );
+            var title = [];
+            var content = [];
+            $title = $xml.find( "title" ).each(function(idx,v){
+                title.push(v);
+            });
+            $content = $xml.find( "content" ).each(function(idx,v){
+                v = new XMLSerializer().serializeToString(v).split(">")[1].split("&lt;br")[0];
+                console.log(v)
+                content.push(v);
+            });
+            for (i = 1; i < title.length; i++)
+            {
+                $("#calendarHolder").append(title[i]);
+                $("#calendarHolder").append(" - " );
+                $("#calendarHolder").append(content[i-1]);
+                $("#calendarHolder").append("<br>");
+            }
+            console.log($title.text());
+        });
+
 }
