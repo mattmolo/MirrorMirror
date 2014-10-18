@@ -2,6 +2,8 @@ var personalMode = 0;
 var jQueryLoad = 0;
 var newsCycle = 0;
 var smallWeather = 0;
+var darkMode = 0;
+var rainToday = 0;
 var tempWeather;
 setTimeout(function(){
     if(jQueryLoad == 0)
@@ -11,18 +13,48 @@ setTimeout(function(){
     }
     
 },2000);
+function updateNews(){
+
+    var url = 'http://www.reddit.com/r/news.json?jsonp=jsonCallback';
+    $.ajax({
+       type: 'GET',
+       url: url,
+       timeout: 2000,
+       jsonpCallback: 'jsonCallback',
+       contentType: "application/json",
+       dataType: 'jsonp',
+       success: function(json) {
+        console.log(json);
+        news = json.data.children;
+    },
+    error: function(e) {
+       console.log(e.message);
+    }
+    });
+}
 setTimeout(function(){
     initialize();
     startTime();
+    getNews();
 
     //getCalendar("");
 },100);
 setTimeout(function(){
-    getNews();
-    setTimeout(function(){
+    //getNews();
+    // setTimeout(function(){
+    if(news == '')
+    {
+        updateNews();
+        setTimeout(function(){
+            startNews();
+        },2000);
+    }
+    else
+    {
         startNews();
-    },1000)
-},500)
+    }
+    // },1000)
+},1000)
 
 function startTime(){
     var time = new Date();
@@ -136,13 +168,14 @@ function getNews(){
     $.ajax({
        type: 'GET',
        url: url,
-       async: false,
+       timeout: 2000,
        jsonpCallback: 'jsonCallback',
        contentType: "application/json",
        dataType: 'jsonp',
        success: function(json) {
-        console.log(json)
+        console.log(json);
         news = json.data.children;
+        //startNews(); 
     },
     error: function(e) {
        console.log(e.message);
@@ -177,6 +210,7 @@ function initialize(){
      type: 'GET',
      url: url,
      async: false,
+     timeout: 2000,
      jsonpCallback: 'jsonCallback',
      contentType: "application/json",
      dataType: 'jsonp',
@@ -187,8 +221,33 @@ function initialize(){
         },
         error: function(e) {
          console.log(e.message);
+         //initialize();
      }
  });
+
+    url = 'http://api.openweathermap.org/data/2.5/forecast/daily?q=West_Lafayette&cnt=1&callback=weatherGet';
+    $.ajax({
+     type: 'GET',
+     url: url,
+     async: false,
+     timeout: 2000,
+     jsonpCallback: 'jsonCallback',
+     contentType: "application/json",
+     dataType: 'jsonp',
+     success: function(json) {
+            var reg = /Rain/;
+            if (reg.exec(json.list[0].weather[0].main) != null)
+            {
+                rainToday = 1;
+            }
+            else{
+                rainToday = 0;
+            }
+            //jQueryLoad = 1;
+        }
+ });  
+
+
     setTimeout(function(){
         initialize();
     },10000);
@@ -271,22 +330,51 @@ function getCalendar(url){
     //         }
     //         console.log($title.text());
     //     });
-var json = {
-    "events":
-    [
-    {
-        "startTime":"8:00",
-        "endTime":"10:15",
-        "title":"Working on Code",
-        "location":"The Office"
-    },
-    {
-        "startTime":"16:30",
-        "endTime":"17:30",
-        "title":"Meeting with Matt",
-        "location":"Cafe"
+if(url == 0)
+{
+    var json = {
+        "events":
+        [
+        {
+            "startTime":"8:00",
+            "endTime":"10:15",
+            "title":"Working on Code",
+            "location":"The Office"
+        },
+        {
+            "startTime":"16:30",
+            "endTime":"17:30",
+            "title":"Meeting with Matt",
+            "location":"Cafe"
+        }
+        ]
     }
-    ]
+}
+else
+{
+    var json = {
+        "events":
+        [
+        {
+            "startTime":"9:30",
+            "endTime":"10:00",
+            "title":"Delcious Breakfast",
+            "location":"My Belly"
+        },
+        {
+            "startTime":"11:00",
+            "endTime":"12:00",
+            "title":"Generate Llama DNA",
+            "location":"EE 14"
+        },
+        {
+            "startTime":"16:30",
+            "endTime":"17:30",
+            "title":"Meeting with John",
+            "location":"Cafe"
+        }
+        ]
+    } 
 }
 for(i = 0; i < json.events.length; i++)
 {
@@ -299,6 +387,7 @@ function enablePersonal(){
     personalMode = 1;
     smallWeather = 1;
     changeWeather(tempWeather);
+    checkForRain();
     // var name = "John"
     // $("#message").html("Hello " + name + "...");
     // $("#message").css("opacity",1);
@@ -306,15 +395,22 @@ function enablePersonal(){
     //     $("#message").css("opacity",0);
     // },2000);
     //setTimeout(function(){
-        $("#calendar").animate({ opacity: 1 }, 1000);
-        $("#calendar").css("marginTop","0px");
-        $("#bus").animate({ opacity: 1 }, 1000);
-        $("#bus").css("marginTop","0px");
-        $("#title").css("fontSize", "3em");
-        $("#date").css("fontSize", "1em");
-        getCalendar("");
-        getBusStop();
-        $("#message").css("opacity",0);
+    $("#calendar").animate({ opacity: 1 }, 1000);
+    $("#calendar").css("marginTop","0px");
+    $("#bus").animate({ opacity: 1 }, 1000);
+    $("#bus").css("marginTop","0px");
+    $("#title").css("fontSize", "3em");
+    $("#date").css("fontSize", "1em");
+    var stop = '59081';
+    var route = '1817';  //INSERT CODE FOR PERSONAL INFO HERE
+    var dark = 0;
+    if (dark == 1)
+    {
+        toggleDarkMode();
+    }
+    getCalendar(1);
+    getBusStop(stop, route);
+    $("#message").css("opacity",0);
     //},3000);
 }
 function disablePersonal(){
@@ -327,23 +423,59 @@ function disablePersonal(){
     $("#bus").animate({ opacity: 0 }, 1000);
     $("#title").css("fontSize", "4em");
     $("#date").css("fontSize", "2em");
+    $("#rainCheck").css("opacity","0");
     startNews();
+    if(darkMode == 1)
+    {
+        toggleDarkMode();
+    }
     setTimeout(function(){
         $("#calendarHolder").empty();
         $("#busTime").empty();
+        $("#rainCheck").empty();
     },1000)
     
 }
 
-function getBusStop() {
-    $.getJSON('http://www.corsproxy.com/citybus.doublemap.com/map/v2/eta?stop=59081', function (json) {
-        data = json.etas['59081'].etas;
+function getBusStop(stop, route) {
+    $("#busTime").append("<br>");
+    $.getJSON('http://www.corsproxy.com/citybus.doublemap.com/map/v2/eta?stop=' + stop, function (json) {
+        data = json.etas[stop].etas;
         $.each(data, function(i, item) {
-            if (data[i].route == '1817') {
+            if (data[i].route == route) {
                 $("#busTime").append(data[i].avg + " minutes<br>");
             }
         });
     });
-    $("#busTime").append("10 minutes" + "<br>");
-    $("#busTime").append("42 minutes" + "<br>");
+    //$("#busTime").append("10 minutes" + "<br>");
+    //$("#busTime").append("42 minutes" + "<br>");
+}
+
+function toggleDarkMode()
+{
+    if(darkMode == 0)
+    {
+        $("body").css("background","#fff");
+        $("body").css("color","#000");
+        $("img").css("-webkit-filter", "invert(100%)");
+        $("img").css("opacity",0);
+        $("img").animate({ opacity: 1 }, 1000);
+        darkMode = 1;
+    }
+    else {
+        $("body").css("background","#000");
+        $("body").css("color","#fff");
+        $("img").css("-webkit-filter", "");
+        $("img").css("opacity",0);
+        $("img").animate({ opacity: 1 }, 1000);
+        darkMode = 0;
+    }
+}
+
+function checkForRain(){
+    if (rainToday == 1)
+    {
+        $("#rainCheck").html("Bring an Umbrella. It will rain today.")
+        $("#rainCheck").css("opacity","1");
+    }
 }

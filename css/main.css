@@ -9,11 +9,12 @@ body {
     font-family: Lato;
     font-weight: 100;
     font-size: 2em;
+    transition: background 2s;
+    transition: color 2s;
 }
 a{
     text-decoration: none;
 }
-
 #title {
     font-size: 4em;
     text-align: center;
@@ -21,7 +22,7 @@ a{
 }
 #date {
     text-align: center;
-    font-size: 2em;
+    font-size: 2ema;
     transition: font-size 1s;
 }
 #weatherHolder {
@@ -52,7 +53,7 @@ a{
     padding-bottom: 0.5em;
 }
 #calendarHolder{
-    border: 1px solid #aaa;
+    border: 0px solid #aaa;
     width:90%;
     margin: 0 auto;
     min-height:200px;
@@ -84,9 +85,10 @@ a{
     transition: margin-top 1s;
 }
 #busTime {
-    border: 1px solid #aaa;
+    border: 0px solid #aaa;
     width: 90%;
     margin: 0 auto;
+    font-weight: 300;
     min-height: 250px;
 }
 #busTitle {
@@ -94,4 +96,8 @@ a{
 }
 #weatherImage {
     padding-top: 0.4em;
+}
+#rainCheck {
+    opacity: 0;
+    transition: opacity 1s;
 }
