@@ -3,6 +3,7 @@ html, body {padding:0;margin:0;}
 
 
 body {
+    overflow-y: hidden;
     background: #000;
     color: white;
     font-family: Lato;
@@ -37,13 +38,53 @@ a{
     width:1280px;
     height:1024px;
 }
+#calendar {
+    margin-top: 400px;
+    opacity: 0;
+    transition: opacity 1s;
+    transition: margin-top 1s;
+    padding-bottom: 0.5em;
+}
 #calendarHolder{
     border: 1px solid #aaa;
     width:90%;
     margin: 0 auto;
-    height:200px;
+    min-height:200px;
 }
 #calendarTitle{
     text-align: center;
     font-size: 1.5em;
+    padding-bottom: 0.3em;
+}
+.calendarEvent {
+    padding-top: 0.5em;
+    font-weight: 300;
+    text-align: center;
+}
+#message {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+    font-size: 3em;
+    opacity: 0;
+    transition: opacity 1s;
+}
+#bus {
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1s;
+    transition: margin-top 1s;
+}
+#busTime {
+    border: 1px solid #aaa;
+    width: 90%;
+    margin: 0 auto;
+    min-height: 250px;
+}
+#busTitle {
+    font-size: 1.5em;
+}
+#weatherImage {
+    padding-top: 0.4em;
 }
