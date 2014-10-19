@@ -663,7 +663,10 @@ function faceListener()
         now = Math.round(now.getTime() / 1000);
         if((now - data) < 5)
         {
-            enablePersonal();
+            if(personalMode == 0)
+            {
+                enablePersonal();
+            }
             setTimeout(function(){
                 faceListener();
             },30*1000);
