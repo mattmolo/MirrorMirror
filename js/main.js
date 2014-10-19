@@ -72,7 +72,7 @@ setTimeout(function(){
         {
             startNews();
         }
-        
+    faceListener();
     // },1000)
 },1000)
 
@@ -581,7 +581,7 @@ setTimeout(function(){
                     },450);
                     setTimeout(function(){$("#message").css("left","120%");},500);  
                     setTimeout(function(){
-                        
+
                         $("#message").animate({
                             left: '5%'
                         },500);
@@ -615,7 +615,7 @@ setTimeout(function(){
                 var swipe;
                 console.log("Swipe Gesture");
                 console.log(gesture);
-                
+
                 clearTimeout(newsTimeout1);
                 clearTimeout(newsTimeout2);
                 $("#message").css("opacity",0);
@@ -657,14 +657,32 @@ setTimeout(function(){
 
 function faceListener()
 {
-    fh = fopen('c:\\FileName.txt', 0); // Open the file for reading.
-    if(fh!=-1) // Check if the file has been successfully opened.
-    {
-        length = flength(fh); // Get the length of the file.
-        str = fread(fh, length); // Read in the entire file.
-        fclose(fh); // Close the file.
+    if (window.XMLHttpRequest)
+{// code for IE7+, Firefox, Chrome, Opera, Safari
+    xmlhttp=new XMLHttpRequest();
+}
+else
+{// code for IE6, IE5
+    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+}
+xmlhttp.open("GET","face.txt",false);
+xmlhttp.send();
+str=xmlhttp.responseText;
 
         // Display the contents of the file.
-        write(str);
+        var now = new Date();
+        now = Math.round(now.getTime() / 1000);
+        if((now - str) < 5)
+        {
+            enablePersonal();
+            setTimeout(function(){
+                faceListener();
+            },30*1000);
+        }
+        else
+        {
+            setTimeout(function(){
+                faceListener();
+            },5*1000);
+        }
     }
-}
