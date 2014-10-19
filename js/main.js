@@ -1,6 +1,6 @@
 var personalMode = 0;
 var jQueryLoad = 0;
-var newsCycle = 0;
+var newsCycle = 1;
 var smallWeather = 0;
 var darkMode = 0;
 var rainToday = 0;
@@ -431,21 +431,21 @@ function enablePersonal(name){
         $("#date").css("fontSize", "1em");
         if (globHours < 11)
         {
-            readme("Good Morning! Here is your information.");
+            readme("Good Morning" + name + "! Here is your information.");
         }
         else if (globHours < 17)
         {
-            readme("Good Afternoon! Here is your information.");
+            readme("Good Afternoon" + name + "! Here is your information.");
         }
         else 
         {
-            readme("Good Evening! Here is your information.");
+            readme("Good Evening" + name + "! Here is your information.");
         }
         if(rainCheck == 1)
         {
             setTimeout(function(){
                 readme("Today has a chance to rain. Bring an umbrella.");
-            },1500);
+            },5000);
         }
         var stop = '59081';
     var route = '1817';  //INSERT CODE FOR PERSONAL INFO HERE
@@ -454,7 +454,15 @@ function enablePersonal(name){
     {
         toggleDarkMode();
     }
-    getCalendar(1);
+    if(name == 'nick')
+    {
+        getCalendar(1);
+    }
+    else 
+    {
+        getCalendar(0);
+    }
+    
     getBusStop(stop, route);
     $("#message").css("opacity",0);
     //},3000);
@@ -561,6 +569,8 @@ function readme(txt){
     play_sound("http://translate.google.com/translate_tts?ie=UTF-8&q="+encodeURIComponent(txt)+"&tl=en&total=1&idx=0prev=input");           
 }
 //----------------------------------------------------------------------
+
+
 var leapEnable = 1;
 setTimeout(function(){
     var controller = Leap.loop({enableGestures: true, background: true}, function(frame){
@@ -654,35 +664,98 @@ setTimeout(function(){
     });
 },1000);
 
+// function faceListener()
+// {
+//     $.get("time.txt",function(data){
+//         console.log(data);
+//         var now = new Date();
+//         now = Math.round(now.getTime() / 1000);
+//         if((now - data) < 5)
+//         {
+//             if(personalMode == 0)
+//             {
+//                 $.get("face.txt",function(name){
+
+//                     enablePersonal(name);
+//                     setTimeout(function(){
+//                         //faceListener();
+//                         if(personalMode == 1)
+//                         {
+//                             //disablePersonal();
+
+//                             $.get("time.txt",function(data2){
+//                                 var now2 = new Date();
+//                                 now2 = Math.round(now2.getTime() / 1000);
+//                                     $.get("face.txt",function(name2){
+
+//                                         if (name =! name2 || (now-data)>5)
+//                                         {
+//                                             disablePersonal();
+//                                             faceListener();
+//                                         }
+//                                         else
+//                                         {
+//                                             setTimeout(function(){
+                                                
+//                                                 disablePersonal();
+//                                                 setTimeout(function(){
+//                                                     faceListener();
+//                                                 },1000);
+//                                             },28000);
+//                                         }
+//                                     },"text");
+//                             },"text");
+
+//                         }
+//                         else 
+//                         {
+//                             faceListener();
+//                         }
+//                     },30*1000);
+//                 },"text");
+//             }
+//         }
+//         else
+//         {
+//             setTimeout(function(){
+//                 faceListener();
+//             },2000);
+//         }
+//     },"text");
+
+//         // Display the contents of the file.
+
+// }
 function faceListener()
 {
-    $.get("time.txt",function(data){
+    var currentName = '';
+    var lastTime = 0;
+    setTimeout(function(){
+        $.get("time.txt",function(data){
         console.log(data);
-        var name;
         var now = new Date();
         now = Math.round(now.getTime() / 1000);
-        if((now - data) < 5)
+        if((now - data) < 20)
         {
-            if(personalMode == 0)
-            {
-
-                $.get("face.txt",function(name){
-
+            $.get("face.txt",function(name){
+                if (currentName != name)
+                {
                     enablePersonal(name);
-                    setTimeout(function(){
-                        faceListener();
-                    },30*1000);
-                },"text");
-            }
+                    lastTime = data;
+                    currentName = name;
+                }
+            },"text");
         }
         else
         {
-            setTimeout(function(){
-                faceListener();
-            },2*1000);
+            if((now - lastTime) > 30)
+            {
+                if(personalMode == 1)
+                {
+                    disablePersonal();
+                }
+            }
         }
     },"text");
-
-        // Display the contents of the file.
-
+    },2000);
 }
