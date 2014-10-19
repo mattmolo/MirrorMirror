@@ -330,6 +330,7 @@ function getWeatherIcon(icon) {
 }
 
 function getCalendar(url){
+    var userNum;
     // $.get(
     //     'http://www.corsproxy.com/www.google.com/calendar/feeds/johnmlee101%40gmail.com/private-80b8fb2cf3fd34f615edfa06770d2151/basic',
     //     function(response) {   
@@ -357,58 +358,60 @@ function getCalendar(url){
     //     });
 if(url == 0)
 {
-    var json = {
-        "events":
-        [
-        {
-            "startTime":"8:00",
-            "endTime":"10:15",
-            "title":"Working on Code",
-            "location":"The Office"
-        },
-        {
-            "startTime":"16:30",
-            "endTime":"17:30",
-            "title":"Meeting with Matt",
-            "location":"Cafe"
-        }
-        ]
-    }
+    userNum = 0;
 }
 else
 {
-    var json = {
-        "events":
-        [
-        {
-            "startTime":"9:30",
-            "endTime":"10:00",
-            "title":"Delcious Breakfast",
-            "location":"My Belly"
-        },
-        {
-            "startTime":"11:00",
-            "endTime":"12:00",
-            "title":"Generate Llama DNA",
-            "location":"EE 14"
-        },
-        {
-            "startTime":"16:30",
-            "endTime":"17:30",
-            "title":"Meeting with John",
-            "location":"Cafe"
-        }
-        ]
-    } 
+    userNum = 1;
 }
-for(i = 0; i < json.events.length; i++)
+var json = [{
+    "events":
+    [
+    {
+        "startTime":"8:00",
+        "endTime":"10:15",
+        "title":"Working on Code",
+        "location":"The Office"
+    },
+    {
+        "startTime":"16:30",
+        "endTime":"17:30",
+        "title":"Meeting with Matt",
+        "location":"Cafe"
+    }
+    ]
+},
 {
-    $("#calendarHolder").append("<div class='calendarEvent'>" + json.events[i].title + " | " + json.events[i].startTime + " - " + json.events[i].endTime + " | " + json.events[i].location +  "<br></div>");
+    "events":
+    [
+    {
+        "startTime":"9:30",
+        "endTime":"10:00",
+        "title":"Delcious Breakfast",
+        "location":"My Belly"
+    },
+    {
+        "startTime":"11:00",
+        "endTime":"12:00",
+        "title":"Generate Llama DNA",
+        "location":"EE 14"
+    },
+    {
+        "startTime":"16:30",
+        "endTime":"17:30",
+        "title":"Meeting with John",
+        "location":"Cafe"
+    }
+    ]
+}]; 
+for(i = 0; i < json[userNum].events.length; i++)
+{
+    $("#calendarHolder").append("<div class='calendarEvent'>" + json[userNum].events[i].title + " | " + json[userNum].events[i].startTime + " - " + json[userNum].events[i].endTime + " | " + json[userNum].events[i].location +  "<br></div>");
 }
 console.log(json)
 }
 
-function enablePersonal(){
+function enablePersonal(name){
     personalMode = 1;
     smallWeather = 1;
     changeWeather(tempWeather);
@@ -451,7 +454,7 @@ function enablePersonal(){
     {
         toggleDarkMode();
     }
-    getCalendar(0);
+    getCalendar(1);
     getBusStop(stop, route);
     $("#message").css("opacity",0);
     //},3000);
@@ -601,7 +604,7 @@ setTimeout(function(){
                 clearTimeout(newsTimeout2);
                 disablePersonal();
             }
-            else if (personalMode == 0)
+            else if (personalMode == 0 && leapEnable == 1)
             {
                 pushBulletSetup();
             }
@@ -653,28 +656,33 @@ setTimeout(function(){
 
 function faceListener()
 {
-    $.get("face.txt",function(data){
+    $.get("time.txt",function(data){
         console.log(data);
+        var name;
         var now = new Date();
         now = Math.round(now.getTime() / 1000);
         if((now - data) < 5)
         {
             if(personalMode == 0)
             {
-                enablePersonal();
+
+                $.get("face.txt",function(name){
+
+                    enablePersonal(name);
+                    setTimeout(function(){
+                        faceListener();
+                    },30*1000);
+                },"text");
             }
-            setTimeout(function(){
-                faceListener();
-            },30*1000);
         }
         else
         {
             setTimeout(function(){
                 faceListener();
-            },5*1000);
+            },2*1000);
         }
     },"text");
 
         // Display the contents of the file.
 
-    }
+}
