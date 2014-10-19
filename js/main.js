@@ -12,9 +12,9 @@ setTimeout(function(){
     if(jQueryLoad == 0)
     {
         startTime();
-        initialize();        
+        initialize();
     }
-    
+
 },2000);
 
 function pushBulletSetup()
@@ -196,7 +196,7 @@ function getNews(){
        success: function(json) {
         console.log(json);
         news = json.data.children;
-        //startNews(); 
+        //startNews();
     },
     error: function(e) {
        console.log(e.message);
@@ -204,7 +204,7 @@ function getNews(){
 });
     setTimeout(function(){
         getNews();
-    },(1000*60*30));   
+    },(1000*60*30));
 }
 function startNews(){
     if(newsCycle == news.length)
@@ -270,7 +270,7 @@ function initialize(){
         }
             //jQueryLoad = 1;
         }
-    });  
+    });
 
 
     setTimeout(function(){
@@ -333,7 +333,7 @@ function getCalendar(url){
     var userNum;
     // $.get(
     //     'http://www.corsproxy.com/www.google.com/calendar/feeds/johnmlee101%40gmail.com/private-80b8fb2cf3fd34f615edfa06770d2151/basic',
-    //     function(response) {   
+    //     function(response) {
     //         console.log(response);
     //         xmlDoc = response;
     //         $xml = $( xmlDoc );
@@ -403,7 +403,7 @@ var json = [{
         "location":"Cafe"
     }
     ]
-}]; 
+}];
 for(i = 0; i < json[userNum].events.length; i++)
 {
     $("#calendarHolder").append("<div class='calendarEvent'>" + json[userNum].events[i].title + " | " + json[userNum].events[i].startTime + " - " + json[userNum].events[i].endTime + " | " + json[userNum].events[i].location +  "<br></div>");
@@ -437,7 +437,7 @@ function enablePersonal(name){
         {
             readme("Good Afternoon" + name + "! Here is your information.");
         }
-        else 
+        else
         {
             readme("Good Evening" + name + "! Here is your information.");
         }
@@ -458,11 +458,11 @@ function enablePersonal(name){
     {
         getCalendar(1);
     }
-    else 
+    else
     {
         getCalendar(0);
     }
-    
+
     getBusStop(stop, route);
     $("#message").css("opacity",0);
     //},3000);
@@ -488,7 +488,7 @@ function disablePersonal(){
         $("#busTime").empty();
         $("#rainCheck").empty();
     },1000)
-    
+
 }
 
 function getBusStop(stop, route) {
@@ -566,7 +566,7 @@ function play_sound(url){
     }
 }
 function readme(txt){
-    play_sound("http://translate.google.com/translate_tts?ie=UTF-8&q="+encodeURIComponent(txt)+"&tl=en&total=1&idx=0prev=input");           
+    play_sound("http://translate.google.com/translate_tts?ie=UTF-8&q="+encodeURIComponent(txt)+"&tl=en&total=1&idx=0prev=input");
 }
 //----------------------------------------------------------------------
 
@@ -590,7 +590,7 @@ setTimeout(function(){
             $("#message").animate({
                 left: '-120%'
             },450);
-            setTimeout(function(){$("#message").css("left","120%");},500);  
+            setTimeout(function(){$("#message").css("left","120%");},500);
             setTimeout(function(){
                 $("#message").animate({
                     left: '5%'
@@ -635,7 +635,7 @@ setTimeout(function(){
                 $("#message").animate({
                     left: '120%'
                 },450)
-                setTimeout(function(){$("#message").css("left","-120%");},500);  
+                setTimeout(function(){$("#message").css("left","-120%");},500);
             }
             else
             {
@@ -644,7 +644,7 @@ setTimeout(function(){
                 $("#message").animate({
                     left: '-120%'
                 },450);
-                setTimeout(function(){$("#message").css("left","120%");},500);  
+                setTimeout(function(){$("#message").css("left","120%");},500);
             }
 
             setTimeout(function(){
@@ -659,7 +659,7 @@ setTimeout(function(){
         setTimeout(function(){
             leapEnable = 1;
         },1000);
-    }   
+    }
 
     });
 },1000);
@@ -696,7 +696,7 @@ setTimeout(function(){
 //                                         else
 //                                         {
 //                                             setTimeout(function(){
-                                                
+
 //                                                 disablePersonal();
 //                                                 setTimeout(function(){
 //                                                     faceListener();
@@ -707,7 +707,7 @@ setTimeout(function(){
 //                             },"text");
 
 //                         }
-//                         else 
+//                         else
 //                         {
 //                             faceListener();
 //                         }
@@ -726,36 +726,40 @@ setTimeout(function(){
 //         // Display the contents of the file.
 
 // }
-function faceListener()
-{
+
+function now() {
+    return Math.round(new Date().getTime()/1000);
+}
+
+function faceListener() {
+
     var currentName = '';
-    var lastTime = 0;
-    setTimeout(function(){
-        $.get("time.txt",function(data){
-        console.log(data);
-        var now = new Date();
-        now = Math.round(now.getTime() / 1000);
-        if((now - data) < 20)
-        {
-            $.get("face.txt",function(name){
-                if (currentName != name)
-                {
-                    enablePersonal(name);
-                    lastTime = data;
-                    currentName = name;
-                }
-            },"text");
-        }
-        else
-        {
-            if((now - lastTime) > 30)
-            {
-                if(personalMode == 1)
-                {
-                    disablePersonal();
-                }
+
+    setInterval(function(){
+
+        $.get("time.txt", function(time){
+
+            console.log(now() - time);
+
+            if ((now() - time) < 30) {
+                $.get("face.txt",function(name){
+                    if (currentName == '') {
+                        enablePersonal(name);
+                        currentName = name;
+                    } else if (currentName != name) {
+                        disablePersonal();
+                        setTimeout(function() {
+                            enablePersonal(name);
+                            currentName = name;
+                        }, 3000);
+                    }
+                }, "text");
+            } else {
+                if (personalMode == 1) disablePersonal();
+                currentName = "";
             }
-        }
-    },"text");
-    },2000);
+
+        }, "text");
+
+    }, 2000);
 }
