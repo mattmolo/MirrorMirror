@@ -733,30 +733,24 @@ function now() {
 
 function faceListener() {
 
-    var currentName = '';
-
+    var dontEnable = false;
     setInterval(function(){
 
         $.get("time.txt", function(time){
 
             console.log(now() - time);
 
-            if ((now() - time) < 30) {
+            if ((now() - time) < 20) {
                 $.get("face.txt",function(name){
-                    if (currentName == '') {
-                        enablePersonal(name);
-                        currentName = name;
-                    } else if (currentName != name) {
-                        disablePersonal();
-                        setTimeout(function() {
-                            enablePersonal(name);
-                            currentName = name;
-                        }, 3000);
-                    }
+                    if (!dontEnable) enablePersonal(name);
+                    dontEnable = true;
                 }, "text");
             } else {
-                if (personalMode == 1) disablePersonal();
-                currentName = "";
+                if (personalMode == 1) {
+                    disablePersonal();
+                    dontEnable = false;
+                }
+
             }
 
         }, "text");
