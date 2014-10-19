@@ -35,19 +35,19 @@ function updateNews(){
 
     var url = 'http://www.reddit.com/r/upliftingnews.json?jsonp=jsonCallback&limit=50';
     $.ajax({
-     type: 'GET',
-     url: url,
-     timeout: 2000,
-     jsonpCallback: 'jsonCallback',
-     contentType: "application/json",
-     dataType: 'jsonp',
-     success: function(json) {
+       type: 'GET',
+       url: url,
+       timeout: 2000,
+       jsonpCallback: 'jsonCallback',
+       contentType: "application/json",
+       dataType: 'jsonp',
+       success: function(json) {
         console.log(json);
         news = json.data.children;
     },
     error: function(e) {
-     console.log(e.message);
- }
+       console.log(e.message);
+   }
 });
 }
 setTimeout(function(){
@@ -72,7 +72,7 @@ setTimeout(function(){
         {
             startNews();
         }
-    faceListener();
+        faceListener();
     // },1000)
 },1000)
 
@@ -187,20 +187,20 @@ var news = '';
 function getNews(){
     var url = 'http://www.reddit.com/r/upliftingnews.json?jsonp=jsonCallback&limit=50';
     $.ajax({
-     type: 'GET',
-     url: url,
-     timeout: 2000,
-     jsonpCallback: 'jsonCallback',
-     contentType: "application/json",
-     dataType: 'jsonp',
-     success: function(json) {
+       type: 'GET',
+       url: url,
+       timeout: 2000,
+       jsonpCallback: 'jsonCallback',
+       contentType: "application/json",
+       dataType: 'jsonp',
+       success: function(json) {
         console.log(json);
         news = json.data.children;
         //startNews(); 
     },
     error: function(e) {
-     console.log(e.message);
- }
+       console.log(e.message);
+   }
 });
     setTimeout(function(){
         getNews();
@@ -232,34 +232,34 @@ function startNews(){
 function initialize(){
     var url = 'http://api.openweathermap.org/data/2.5/find?q=West_Lafayette&callback=weatherGet';
     $.ajax({
-       type: 'GET',
-       url: url,
-       async: false,
-       timeout: 2000,
-       jsonpCallback: 'jsonCallback',
-       contentType: "application/json",
-       dataType: 'jsonp',
-       success: function(json) {
+     type: 'GET',
+     url: url,
+     async: false,
+     timeout: 2000,
+     jsonpCallback: 'jsonCallback',
+     contentType: "application/json",
+     dataType: 'jsonp',
+     success: function(json) {
         changeWeather(json.list[0]);
         tempWeather = json.list[0];
             //jQueryLoad = 1;
         },
         error: function(e) {
-           console.log(e.message);
+         console.log(e.message);
          //initialize();
      }
  });
 
     url = 'http://api.openweathermap.org/data/2.5/forecast/daily?q=West_Lafayette&cnt=1&callback=weatherGet';
     $.ajax({
-       type: 'GET',
-       url: url,
-       async: false,
-       timeout: 2000,
-       jsonpCallback: 'jsonCallback',
-       contentType: "application/json",
-       dataType: 'jsonp',
-       success: function(json) {
+     type: 'GET',
+     url: url,
+     async: false,
+     timeout: 2000,
+     jsonpCallback: 'jsonCallback',
+     contentType: "application/json",
+     dataType: 'jsonp',
+     success: function(json) {
         var reg = /Rain/;
         if (reg.exec(json.list[0].weather[0].main) != null)
         {
@@ -565,92 +565,88 @@ setTimeout(function(){
         gesture = frame.gestures[0]
         switch (gesture.type){
           case "circle":
-          console.log("Circle Gesture");
-          leapEnable = 0;
-
-          var swipe;
-          console.log(gesture);
-          newsCycle++;
-          clearTimeout(newsTimeout1);
-          clearTimeout(newsTimeout2);
-          $("#message").css("opacity",0);
-
-                    //swipe = 'r';
-                    $("#message").animate({
-                        left: '-120%'
-                    },450);
-                    setTimeout(function(){$("#message").css("left","120%");},500);  
-                    setTimeout(function(){
-
-                        $("#message").animate({
-                            left: '5%'
-                        },500);
-                        startNews();
-                    },500);
-
-                    break;
-                    case "keyTap":
-                    console.log("Key Tap Gesture");
-                    console.log(gesture);
-                  //toggleDarkMode();
-                  //pushBulletSetup();
-                  leapEnable = 0;
-                  break;
-                  case "screenTap":
-                  console.log("Screen Tap Gesture");
-                  console.log(gesture);
-                  if(personalMode == 1)
-                  {
-                    clearTimeout(newsTimeout1);
-                    clearTimeout(newsTimeout2);
-                    disablePersonal();
-
-                }
-                else {
-                    pushBulletSetup();
-                }
-                leapEnable = 0;
-                break;
-                case "swipe":
-                var swipe;
-                console.log("Swipe Gesture");
-                console.log(gesture);
-
+            console.log("Circle Gesture");
+            leapEnable = 0;
+            var swipe;
+            console.log(gesture);
+            newsCycle++;
+            clearTimeout(newsTimeout1);
+            clearTimeout(newsTimeout2);
+            $("#message").css("opacity",0);
+            //swipe = 'r';
+            $("#message").animate({
+                left: '-120%'
+            },450);
+            setTimeout(function(){$("#message").css("left","120%");},500);  
+            setTimeout(function(){
+                $("#message").animate({
+                    left: '5%'
+                },500);
+                startNews();
+            },500);
+            break;
+            case "keyTap":
+            console.log("Key Tap Gesture");
+            console.log(gesture);
+            //toggleDarkMode();
+            //pushBulletSetup();
+            leapEnable = 0;
+            break;
+            case "screenTap":
+            console.log("Screen Tap Gesture");
+            console.log(gesture);
+            if(personalMode == 1)
+            {
                 clearTimeout(newsTimeout1);
                 clearTimeout(newsTimeout2);
-                $("#message").css("opacity",0);
-                if(gesture.position[0]-gesture.startPosition[0] > 0)
-                {
-                    newsCycle--;
-                    //swipe = 'r';
-                    $("#message").animate({
-                        left: '120%'
-                    },450)
-                    setTimeout(function(){$("#message").css("left","-120%");},500);  
-                }
-                else
-                {
-                    newsCycle++;
-                    //swipe = 'l';
-                    $("#message").animate({
-                        left: '-120%'
-                    },450);
-                    setTimeout(function(){$("#message").css("left","120%");},500);  
-                }
-
-                setTimeout(function(){
-                    $("#message").animate({
-                        left: '5%'
-                    },500);
-                    startNews();
-                },500);
-                leapEnable = 0;
-                break;
+                disablePersonal();
             }
+            else if (personalMode == 0)
+            {
+                pushBulletSetup();
+            }
+            leapEnable = 0;
+            break;
+            case "swipe":
+            var swipe;
+            console.log("Swipe Gesture");
+            console.log(gesture);
+
+            clearTimeout(newsTimeout1);
+            clearTimeout(newsTimeout2);
+            $("#message").css("opacity",0);
+            if(gesture.position[0]-gesture.startPosition[0] > 0)
+            {
+                newsCycle--;
+                //swipe = 'r';
+                $("#message").animate({
+                    left: '120%'
+                },450)
+                setTimeout(function(){$("#message").css("left","-120%");},500);  
+            }
+            else
+            {
+                newsCycle++;
+                //swipe = 'l';
+                $("#message").animate({
+                    left: '-120%'
+                },450);
+                setTimeout(function(){$("#message").css("left","120%");},500);  
+            }
+
             setTimeout(function(){
-                leapEnable = 1;
-            },1000);
+                $("#message").animate({
+                    left: '5%'
+                },500);
+                startNews();
+            },500);
+            leapEnable = 0;
+            break;
         }
+        setTimeout(function(){
+            leapEnable = 1;
+        },1000);
+    }   
 
     });
 },1000);
