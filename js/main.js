@@ -657,22 +657,11 @@ setTimeout(function(){
 
 function faceListener()
 {
-    if (window.XMLHttpRequest)
-{// code for IE7+, Firefox, Chrome, Opera, Safari
-    xmlhttp=new XMLHttpRequest();
-}
-else
-{// code for IE6, IE5
-    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-}
-xmlhttp.open("GET","face.txt",false);
-xmlhttp.send();
-str=xmlhttp.responseText;
-
-        // Display the contents of the file.
+    $.get("face.txt",function(data){
+        console.log(data);
         var now = new Date();
         now = Math.round(now.getTime() / 1000);
-        if((now - str) < 5)
+        if((now - data) < 5)
         {
             enablePersonal();
             setTimeout(function(){
@@ -685,4 +674,8 @@ str=xmlhttp.responseText;
                 faceListener();
             },5*1000);
         }
+    },"text");
+
+        // Display the contents of the file.
+
     }
