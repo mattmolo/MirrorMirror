@@ -788,3 +788,48 @@ function faceListener() {
 
     }, 2000);
 }
+
+
+setTimeout(function() {
+
+ $$("body").swipeRight(function() { 
+    clearTimeout(newsTimeout1);
+    clearTimeout(newsTimeout2);
+    $("#message").css("opacity",0);
+    newsCycle--;
+    //swipe = 'r';
+    $("#message").animate({
+        left: '120%'
+    },450)
+    setTimeout(function(){$("#message").css("left","-120%");},500);
+    setTimeout(function(){
+        $("#message").animate({
+            left: '5%'
+        },500);
+        startNews();
+    },500);
+  });
+
+ $$("body").swipeLeft(function() { 
+    clearTimeout(newsTimeout1);
+    clearTimeout(newsTimeout2);
+    $("#message").css("opacity",0);
+    newsCycle++;
+    //swipe = 'l';
+    $("#message").animate({
+        left: '-120%'
+    },450);
+    setTimeout(function(){$("#message").css("left","120%");},500);
+    setTimeout(function(){
+        $("#message").animate({
+            left: '5%'
+        },500);
+        startNews();
+    },500);
+});
+ $$("body").tap(function(){
+    alert("push would be made now")
+ });
+
+},1000);
+
