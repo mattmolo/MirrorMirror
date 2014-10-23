@@ -8,6 +8,7 @@ var tempWeather;
 var globHours = 0;
 var newsTimeout1;
 var newsTimeout2;
+var dontEnable = false;
 setTimeout(function(){
     if(jQueryLoad == 0)
     {
@@ -21,7 +22,7 @@ function pushBulletSetup()
 {
     PushBullet.APIKey = "v1Qnaiw2UD65C8QBlHtI9hAartFy7uia29ujyAL2eWFQy";
     //var res = PushBullet.devices();
-    //console.log(news);
+    //console.log("pushing!");
     PushBullet.push('link', null, 'johnmlee101@gmail.com', {title: "Reddit Link", url: news[newsCycle].data.url, body: "Your MirrorMirror Link"}, function(err, res) {
         if(err) {
             throw err;
@@ -29,6 +30,12 @@ function pushBulletSetup()
             //console.log(res);
         }
     });
+
+    $("#body").append("<p id='pb' class='error'>Sent via pushbullet!</p>");
+
+    setTimeout(function() {
+        $("#pb").remove();
+    }, 300);
 }
 
 function updateNews(){
@@ -42,7 +49,7 @@ function updateNews(){
        contentType: "application/json",
        dataType: 'jsonp',
        success: function(json) {
-        console.log(json);
+        //console.log(json);
         news = json.data.children;
     },
     error: function(e) {
@@ -194,7 +201,7 @@ function getNews(){
        contentType: "application/json",
        dataType: 'jsonp',
        success: function(json) {
-        console.log(json);
+        //console.log(json);
         news = json.data.children;
         //startNews();
     },
@@ -279,7 +286,7 @@ function initialize(){
 }
 
 function changeWeather(json){
-    console.log(json);
+    //console.log(json);
     var icon = json.weather[0].icon;
     //icon = "01d"
     var temperature = Math.round((json.main.temp - 273.15)*(9/5)+32);
@@ -358,11 +365,11 @@ function getCalendar(url){
     //     });
 if(url == 0)
 {
-    userNum = 0;
+    userNum = 1;
 }
 else
 {
-    userNum = 1;
+    userNum = 0;
 }
 var json = [{
     "events":
@@ -387,7 +394,7 @@ var json = [{
     {
         "startTime":"9:30",
         "endTime":"10:00",
-        "title":"Delcious Breakfast",
+        "title":"Delicious Breakfast",
         "location":"My Belly"
     },
     {
@@ -408,7 +415,7 @@ for(i = 0; i < json[userNum].events.length; i++)
 {
     $("#calendarHolder").append("<div class='calendarEvent'>" + json[userNum].events[i].title + " | " + json[userNum].events[i].startTime + " - " + json[userNum].events[i].endTime + " | " + json[userNum].events[i].location +  "<br></div>");
 }
-console.log(json)
+//console.log(json)
 }
 
 function enablePersonal(name){
@@ -572,47 +579,71 @@ function readme(txt){
 
 
 var leapEnable = 1;
+var say = true;
+
 setTimeout(function(){
     var controller = Leap.loop({enableGestures: true, background: true}, function(frame){
       if(frame.valid && frame.gestures.length > 0 && leapEnable == 1){
         gesture = frame.gestures[0]
         switch (gesture.type){
           case "circle":
-            console.log("Circle Gesture");
+            //console.log("Circle Gesture");
             leapEnable = 0;
-            var swipe;
-            console.log(gesture);
-            newsCycle++;
-            clearTimeout(newsTimeout1);
-            clearTimeout(newsTimeout2);
-            $("#message").css("opacity",0);
-            //swipe = 'r';
-            $("#message").animate({
-                left: '-120%'
-            },450);
-            setTimeout(function(){$("#message").css("left","120%");},500);
-            setTimeout(function(){
+            if (personalMode == 0) {
+                var swipe;
+                console.log(gesture);
+                newsCycle++;
+                clearTimeout(newsTimeout1);
+                clearTimeout(newsTimeout2);
+                $("#message").css("opacity",0);
+                //swipe = 'r';
                 $("#message").animate({
-                    left: '5%'
+                    left: '-120%'
+                },450);
+                setTimeout(function(){$("#message").css("left","120%");},500);
+                setTimeout(function(){
+                    $("#message").animate({
+                        left: '5%'
+                    },500);
+                    startNews();
                 },500);
-                startNews();
-            },500);
+            } else {
+                if (say) {
+                    say = false
+                    console.log("EASTER EGG");
+                    readme("What I mean is, you're not a king yet.");
+                    setTimeout(function(){
+                        readme("But you can become one.");
+                    }, 2200);
+                    setTimeout(function(){
+                        readme("All you have to do is marry a princess.");
+                    }, 4200);
+                    setTimeout(function(){
+                        say = true;
+                    }, 8000);
+                }
+            }
             break;
-            case "keyTap":
-            console.log("Key Tap Gesture");
-            console.log(gesture);
+        case "keyTap":
+            //console.log("Key Tap Gesture");
+            //console.log(gesture);
             //toggleDarkMode();
             //pushBulletSetup();
             leapEnable = 0;
             break;
             case "screenTap":
-            console.log("Screen Tap Gesture");
-            console.log(gesture);
+            //console.log("Screen Tap Gesture");
+            //console.log(gesture);
             if(personalMode == 1)
             {
                 clearTimeout(newsTimeout1);
                 clearTimeout(newsTimeout2);
                 disablePersonal();
+                clearInterval(listenTimer);
+                setTimeout(function(){
+                    faceListener();
+                },10000);
+                dontEnable = false;
             }
             else if (personalMode == 0 && leapEnable == 1)
             {
@@ -622,8 +653,8 @@ setTimeout(function(){
             break;
             case "swipe":
             var swipe;
-            console.log("Swipe Gesture");
-            console.log(gesture);
+            //console.log("Swipe Gesture");
+            //console.log(gesture);
 
             clearTimeout(newsTimeout1);
             clearTimeout(newsTimeout2);
@@ -730,11 +761,11 @@ setTimeout(function(){
 function now() {
     return Math.round(new Date().getTime()/1000);
 }
-
+var listenTimer;
 function faceListener() {
 
-    var dontEnable = false;
-    setInterval(function(){
+    dontEnable = false;
+    listenTimer = setInterval(function(){
 
         $.get("time.txt", function(time){
 
